@@ -1,0 +1,104 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2cm]{geometry}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{diagbox}
+
+\title{Sprawozdanie P2.7}
+\author{Kamil Tasarz, 322492}
+\date{grudzień 2021 - styczeń 2022}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Wstęp}
+
+Umiejętność całkowania dowolnych funkcji ma niewątpliwie wiele zastosowań w przeróżnych dziedzinach nauki. Jednakże znajdowanie dokładnej wartości całki z dowolnej funkcji jest zadaniem bardzo trudnym, a czasami wręcz niewykonalnym, dlatego w praktyce wykorzystuje sie różne metody znajdowania przybliżonych wartości całek. W poniższym sprawozdaniu zajmę się metodą Romberga, której rezultatem jest tablica coraz lepszych przybliżeń całki $ \int_a^b f(x) dx$
+
+\section{Złożony wzór trapezów}
+Bazą metody Romberga jest złożony wzór trapezów. Nie będzie on omawiany szeroko w tym sprawozdaniu. Kluczową informacją jest, że dzieląc przedział $[a, b]$ na $2^n$ równych przedziałów otrzymujemy przybliżenie
+$$T_n = h_n \sum_{i=0}^{2^n} \textquotesingle \textquotesingle f(a+ ih_n), \quad \text{gdzie} \quad h_n = \frac{b-a}{2^n}.$$
+Jednocześnie dla kolejnych wartości n są to pierwsze przybliżenie metody Romberga (znajdujące się w pierwszej kolumnie). Przyjmujemy, więc $ R_{n, 0} = T_n$ ze wzory powyżej. Aby uniknąć wielokrotnego wyliczenia wartości funkcji w tych samych punktach wyrażamy wyrazy $R_{n, 0}$ rekurencyjnie.
+$$R_{n, 0} = \frac{1}{2}R_{n-1, 0} + h_n \sum_{i=1}^{2^{n-1}} f(a+(2i -1)h_n).$$
+Dzieje się tak, ponieważ w porównaniu z poprzednim wyrazem chcę wziąć $2^{n-1}$ punktów, które są środkami przedziałów z poprzedniego kroku, a policzone już wcześniej wystarczy podzielić przez $2$. Z kolei dla $n=0$ wyrazenie jest równe $R_{0, 0} = \frac{1}{2}[f(b)-f(a)]$
+
+\section{Poprawianie przybliżeń}
+
+\subsection{Złożony wzór Simpsona}
+
+Oznaczmy $R_{n, 0}$ jako wynik dla złożonego wzory trapezów. Błąd przybliżenia całki taką metodą wynosi:
+$$I(f) - R_{n, 0} = c_2h_n^2 + c_4h_n^4 + c_8h_n^8 + \dots, $$
+gdzie $c_i$ to pewne stałe niezależne od $n$ zaś $h_n = \frac{b-a}{2^n}$.
+Rozważmy dwa kolejne przybliżenia.
+$$I(f) - R_{n, 0} = c_2h_n^2 + c_4h_n^4 + c_8h_n^8 + \dots $$
+$$I(f) - R_{n+1, 0} = c_2h_{n+1}^2 + c_4h_{n+1}^4 + c_8h_{n+1}^8 + \dots $$
+Zuważmy, że $h_{n+1} = \frac{h_n}{2}$. Otrzymamy zatem:
+$$I(f) - R_{n, 0} = c_2h_n^2 + c_4h_n^4 + c_8h_n^8 + \dots $$
+$$I(f) - R_{n+1, 0} = c_2\frac{h_n^2}{4} + c_4\frac{h_n^4}{16} + c_8\frac{h_n^8}{64} + \dots $$
+Po pomnożeniu drugiego równania przez $4$ i odjęciu stronammi pierwszego równania od drugiego:
+$$ 3I(f) - 4R_{n+1, 0} + R_{n, 0} = \frac{-3}{4}c_4h_n^4 + \frac{-15}{16}c_8h_n^8 + \dots$$
+Co najważniejsze udało nam się pozbyć największego składnika reszty. Zatem porządkując powyższe równanie do postaci:
+$$I(f) - \frac{4R_{n+1, 0} - R_{n, 0}}{3} = -c_4\frac{h_n^4}{4} - c_8\frac{5h_n^8}{16} - \dots, $$
+łatwo zauważyć, że wyrażenie $ \frac{4R_{n+1, 0} - R_{n, 0}}{3} $ jest lepszym przybliżeniem szukanej całki niż $R_{n, 0}$ czy $R_{n+1, 0}$. Oznaczmy tak uzyskany wynik jako:
+$$ \frac{4R_{n+1, 0} - R_{n, 0}}{3} = R_{n+1, 1}. $$
+Jest to złożony wzór Simpsona. Iterując po kolejnych $n$ uzyskujemy w ten sposób drugą kolumnę macierzy Romberga.
+
+\subsection{Kolejne kolumny}
+Przeprowadźmy bardzo podobny zabieg dla dwóch kolejnych wyrazów z kolumny $m$. Mamy
+$$I(f) - R_{n, m} = c_{2^{m+1}}h_n^{2^{m+1}} + c_{2^{m+2}}h_n^{2^{m+2}} + c_{2^{m+3}}h_n^{2^{m+3}} + \dots $$
+$$I(f) - R_{n, m} = c_{2^{m+1}}h_{n+1}^{2^{m+1}} + c_{2^{m+2}}h_{n+1}^{2^{m+2}} + c_{2^{m+3}}h_{n+1}^{2^{m+3}} + \dots $$
+Skoro $h_{n+1} = \frac{h_n}{2}$ to mozemy zapisać
+$$I(f) - R_{n, m} = c_{2^{m+1}}h_n^{2^{m+1}} + c_{2^{m+2}}h_n^{2^{m+2}} + c_{2^{m+3}}h_n^{2^{m+3}} + \dots $$
+$$I(f) - R_{n, m} = c_{2^{m+1}}\frac{h_n^{2^{m+1}}}{2^{2^{m+1}}} + c_{2^{m+2}}\frac{h_n^{2^{m+2}}}{2^{2^{m+2}}} + c_{2^{m+3}}\frac{h_n^{2^{m+3}}}{2^{2^{m+3}}} + \dots $$
+Następnie mnożąc dolne równanie przez $4^{m+1}$ i odejmując górne równanie od dolnego:
+$$ (4^{m+1} - 1) I(f) - 4^{m+1}R_{n+1, m} + R_{n, m} = \frac{-3}{4}c_{2^{m+2}}h_n^{2^{m+2}} + \frac{-15}{16}c_{2^{m+3}}h_n^{2^{m+3}} + \dots $$
+Otrzymaliśmy zatem wzór na lepsze przyblizenie całki pochodzący od dwóch wcześniej już obliczonych, a mianowicie $ \frac{4^{m+1}R_{n+1, m} - R_{n, m}}{4^{m+1}-1}$. Po zmniejszeniu indeksów o $1$ oznaczę
+$$ R_{n, m} = \frac{1}{4^m - 1}(4^mR_{n, m-1} - R_{n-1, m-1}) $$
+lub równważnie
+$$ R_{n, m} = R_{n, m-1} + \frac{1}{4^m - 1}(R_{n, m-1} - R_{n-1, m-1}).$$
+Wyrażenia te dla $n>0$ tworzą tablicę Romberga, w której dla coraz większych $n$ i $m$ otrzymujemy coraz lepsze przybliżenia całki z funkcji.
+
+\section{Program i wyniki}
+Do zaprogramowania metody Romberga użyłem języka Julia w wersji 1.6.3. Używałem standardowej precyzji arytmetyki do obliczeń. Sprawdziłem zachowanie metody dla 6 funkcji: wielomianowej, wykładniczej, Rungego, oraz trzech przykładowych z treści zadania. Dla każdej z funkcji wyznaczyłem ile wierszy tablicy Romberga jest niezbędnych dla spełnienia warunku z treści zadania. Wyniki zaprezentowane są w poniższej tabeli.
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|} \hline
+\backslashbox{całka}{$\epsilon$}
+ & $10^{-1}$ & $10^{-2}$ & $10^{-3}$ & $10^{-4}$ & $10^{-5}$ & $10^{-6}$ & $10^{-7}$ & $10^{-8}$ \\ \hline
+$\int_{-1}^1 2x^3 - \frac{6}{5}x^2 + 0.17 dx$ & 4 & 6 & 7 & 9 & 10 & 12 & 14 & 15 \\ \hline
+$\int_{-1}^1 e^x dx$ & 1 & 4 & 5 & 7 & 9 & 10 & 12 & 14 \\ \hline
+$\int_{-1}^1 \frac{1}{1+25x^2}$ & 4 & 5 & 5 & 6 & 8 & 10 & 11 & 13 \\ \hline
+$\int_{-1}^1 \frac{1}{x^4+x^2+0.9}$ & 2 & 4 & 5 & 7 & 9 & 10 & 12 & 14 \\ \hline
+$\int_{0}^1 \frac{1}{1+x^4}$ & 2 & 3 & 5 & 6 & 8 & 10 & 11 & 13 \\ \hline
+$\int_{0}^1 \frac{2}{2 + \sin{(10\pi x)}}$ & 3 & 4 & 4 & 4 & 5 & 5 & 5 & 5 \\ \hline
+\end{tabular}
+\end{center}
+Wszystkie te funkcje wymagają podobnego nakładu pracy, aby uzyskać żądane przybliżenie z całki. Nieco zaskakujące mogą być wyniki dla pierwszej funkcji, czyli nieskomplikowanego wielomianu. Mimo, że przybliżona wartość całki już po kilku krokach jest bardzo dokłdna to warunek zadania nie jest spełniony. \\ Dodatkowo w programie zadbałem o możliwość wypisywanie całej tablicy Romberga lub błędów względnych wartości znajdującyh się w niej.
+
+\section{Podsumowanie}
+Metoda Romberga jest efektywną metodą całkowania numerycznego. Bazując na dużo prostszych metodach (metoda trapezów, Simpsona) i wykorzystując podstawowe operacje arytmetyczne jest w stanie poprawić przybliżenie całki o rzędy wielkości.
+
+\begin{thebibliography}{}
+
+\bibitem{texbook}
+David Kincaid, Ward Cheney, "Analiza numeryczna" \href{https://www.impan.pl/~szczep/AMM1/Kincaid.pdf}{link}
+
+\bibitem{texbook}
+Wikipedia: Metoda Romberga - \href{https://pl.wikipedia.org/wiki/Metoda_Romberga}{link}
+
+\bibitem{texbook}
+Wikipedia: Romberg's method - \href{https://en.wikipedia.org/wiki/Romberg%27s_method}{link}
+
+\bibitem{texbook}
+dr hab. Albert Kubzdela, Metody obliczeniowe - wykład nr 4 \href{http://albert.kubzdela.pracownik.put.poznan.pl/p4-10.pdf}{link}
+
+\end{thebibliography}
+
+\end{document}
